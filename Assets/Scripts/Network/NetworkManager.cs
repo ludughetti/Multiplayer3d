@@ -18,6 +18,7 @@ namespace Network
         
         [Header("Player Input")]
         [SerializeField] private InputActionReference moveAction;
+        [SerializeField] private InputActionReference lookAction;
         [SerializeField] private InputActionReference jumpAction;
         
         private readonly Dictionary<PlayerRef, NetworkObject> _activePlayers = new ();
@@ -139,8 +140,17 @@ namespace Network
         {
             if (!LocalPlayer) return;
             
-            var move = moveAction.action.ReadValue<Vector2>().normalized;
-            input.Set(new NetworkInputData { Move = move });
+            // Get player movement
+            var moveInput = moveAction.action.ReadValue<Vector2>().normalized;
+            
+            // Get mouse yaw rotation
+            var lookInput = lookAction.action.ReadValue<Vector2>().normalized;
+            
+            input.Set(new NetworkInputData
+            {
+                Move = moveInput,
+                YawDelta = lookInput.x
+            });
         }
         
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
