@@ -173,10 +173,10 @@ MonoBehaviour:
   _stateAuthorityChangeErrorCorrectionDelta: 0
   gravity: -20
   jumpImpulse: 8
-  acceleration: 10
+  acceleration: 15
   braking: 10
-  maxSpeed: 2
-  rotationSpeed: 15
+  maxSpeed: 10
+  rotationSpeed: 40
 --- !u!114 &8334094343941202327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,8 +190,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 4754808157768365389}
-  moveSpeed: 10
-  rotationSpeed: 200
+  moveSpeed: 7.5
+  rotationSpeed: 150
 --- !u!1 &4709959879586567138
 GameObject:
   m_ObjectHideFlags: 0

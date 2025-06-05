@@ -1,7 +1,6 @@
 using Fusion;
 using Network;
 using UnityEngine;
-using Utils;
 
 namespace Player
 {
@@ -12,8 +11,8 @@ namespace Player
         [SerializeField] private Camera playerCamera;
         
         [Header("Movement Settings")]
-        [SerializeField] private float moveSpeed = 5f;
-        [SerializeField] private float rotationSpeed = 200f;
+        [SerializeField] private float moveSpeed = 7.5f;
+        [SerializeField] private float rotationSpeed = 80f;
         
         private NetworkCharacterController _charControl;
         private float _currentYaw;
