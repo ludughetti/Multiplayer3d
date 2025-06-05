@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fusion;
 using Fusion.Sockets;
+using Player;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Utils;
 
 namespace Network
@@ -14,9 +16,16 @@ namespace Network
         [SerializeField] private NetworkPrefabRef playerPrefab;
         [SerializeField] private List<Transform> playerSpawnPositions;
         
+        [Header("Player Input")]
+        [SerializeField] private InputActionReference moveAction;
+        [SerializeField] private InputActionReference jumpAction;
+        
         private readonly Dictionary<PlayerRef, NetworkObject> _activePlayers = new ();
         private NetworkRunner _runner;
         
+        public PlayerController LocalPlayer { get; set; }
+        
+        // ---------------------- Start game ---------------------- //
         private async void Start()
         {
             var sessionStarted = await StartGameSession();
@@ -51,6 +60,8 @@ namespace Network
             Debug.Log("Game started!");
             return startTask.Result.Ok;
         }
+        
+        // ---------------------- Stop game ---------------------- //
         
         private void OnApplicationQuit()
         {
@@ -88,6 +99,8 @@ namespace Network
             _activePlayers.Remove(player);
         }
         
+        // ---------------------- On new connection ---------------------- //
+        
         public void OnConnectedToServer(NetworkRunner runner)
         {
             Debug.Log("Connected to server!");
@@ -120,6 +133,16 @@ namespace Network
             return playerSpawnPositions[randomIndex].position;
         }
         
+        // ---------------------- On player input ---------------------- //
+        
+        public void OnInput(NetworkRunner runner, NetworkInput input)
+        {
+            if (!LocalPlayer) return;
+            
+            var move = moveAction.action.ReadValue<Vector2>().normalized;
+            input.Set(new NetworkInputData { Move = move });
+        }
+        
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
         public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
         public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
@@ -128,7 +151,6 @@ namespace Network
         public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
         public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data) { }
         public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress) { }
-        public void OnInput(NetworkRunner runner, NetworkInput input) { }
         public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
         public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) { }
         public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }

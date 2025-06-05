@@ -13,7 +13,9 @@ GameObject:
   - component: {fileID: 1000012826935981607}
   - component: {fileID: 4793380380982376668}
   - component: {fileID: 7655614177732369574}
-  - component: {fileID: 9211516512488843080}
+  - component: {fileID: 3310958136511399674}
+  - component: {fileID: 4799829595576220621}
+  - component: {fileID: 8334094343941202327}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -29,7 +31,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1312124928261220756}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -127,9 +129,35 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 9211516512488843080}
+  - {fileID: 4799829595576220621}
+  - {fileID: 8334094343941202327}
   ForceRemoteRenderTimeframe: 0
---- !u!114 &9211516512488843080
+--- !u!143 &3310958136511399674
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312124928261220756}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 1
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4799829595576220621
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -138,11 +166,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 1312124928261220756}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Script: {fileID: 11500000, guid: 378411a89480da345945c2f888327a2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _stateAuthorityChangeErrorCorrectionDelta: 0
-  SyncScale: 0
-  SyncParent: 0
-  _autoAOIOverride: 1
-  DisableSharedModeInterpolation: 0
+  gravity: -20
+  jumpImpulse: 8
+  acceleration: 10
+  braking: 10
+  maxSpeed: 2
+  rotationSpeed: 15
+--- !u!114 &8334094343941202327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312124928261220756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5307eaa9e13e24281478ed577258a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 500
