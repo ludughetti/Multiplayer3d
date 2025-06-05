@@ -6,7 +6,7 @@ namespace Utils
 {
     public class CameraFollow : MonoBehaviour
     {
-        [SerializeField] private Vector3 offset = new (0, 5, -10);
+        [SerializeField] private Vector3 offset = new (0, 4, -12);
         [SerializeField] private float followSpeed = 5f;
 
         private Transform _target;

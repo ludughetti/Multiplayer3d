@@ -56,6 +56,10 @@ namespace Player
             // Apply yaw orbiting
             _currentYaw += input.YawDelta * rotationSpeed * Runner.DeltaTime;
             transform.rotation = Quaternion.Euler(0, _currentYaw, 0);
+            
+            // Jump
+            if (input.IsInputDown(NetworkButtonType.Jump))
+                _charControl.Jump();
         }
     }
 }

@@ -139,18 +139,19 @@ namespace Network
         public void OnInput(NetworkRunner runner, NetworkInput input)
         {
             if (!LocalPlayer) return;
+            var inputData = new NetworkInputData();
             
             // Get player movement
-            var moveInput = moveAction.action.ReadValue<Vector2>().normalized;
+            inputData.Move = moveAction.action.ReadValue<Vector2>().normalized;
             
             // Get mouse yaw rotation
-            var lookInput = lookAction.action.ReadValue<Vector2>().normalized;
+            inputData.YawDelta = lookAction.action.ReadValue<Vector2>().normalized.x;
             
-            input.Set(new NetworkInputData
-            {
-                Move = moveInput,
-                YawDelta = lookInput.x
-            });
+            // Check jump
+            if (jumpAction.action.ReadValue<float>() > 0f)
+                inputData.AddInput(NetworkButtonType.Jump);
+            
+            input.Set(inputData);
         }
         
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
