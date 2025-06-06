@@ -19,7 +19,6 @@ namespace Network
         
         [Header("Player Input")]
         [SerializeField] private InputActionReference moveAction;
-        [SerializeField] private InputActionReference lookAction;
         [SerializeField] private InputActionReference jumpAction;
         
         private readonly Dictionary<PlayerRef, NetworkObject> _activePlayers = new ();
@@ -145,9 +144,6 @@ namespace Network
             
             // Get player movement
             inputData.Move = moveAction.action.ReadValue<Vector2>().normalized;
-            
-            // Get mouse yaw rotation
-            inputData.YawDelta = lookAction.action.ReadValue<Vector2>().x;
             
             // Check jump
             if (jumpAction.action.ReadValue<float>() > 0f)
