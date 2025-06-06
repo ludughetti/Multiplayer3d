@@ -1,16 +1,22 @@
-using Fusion;
-using Network;
+using System.Collections.Generic;
+using Player;
 using UnityEngine;
 
 namespace Endzone
 {
-    public class EndzoneController : NetworkBehaviour
+    public class EndzoneController : MonoBehaviour
     {
+        private readonly HashSet<PlayerController> _playersTriggered = new();
+        
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out Player.PlayerController player) && player.HasInputAuthority)
+            if (other.TryGetComponent<PlayerController>(out var player) && player.HasInputAuthority)
             {
-                player.ReachEndzone();
+                if (_playersTriggered.Contains(player))
+                    return; // already triggered for this player locally
+            
+                _playersTriggered.Add(player);
+                player.RequestFinishRPC();
             }
         }
     }

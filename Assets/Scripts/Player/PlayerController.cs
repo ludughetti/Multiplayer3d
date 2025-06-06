@@ -13,6 +13,7 @@ namespace Player
         
         private NetworkCharacterController _charControl;
         
+        [Networked]
         public bool HasReachedEnd { get; private set; }
 
         public override void Spawned()
@@ -46,11 +47,12 @@ namespace Player
                 _charControl.Jump();
         }
 
-        public void ReachEndzone()
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        public void RequestFinishRPC()
         {
-            if (HasReachedEnd) return;
-
-            HasReachedEnd = true;
+            if (HasReachedEnd) return; // double check server side to avoid dupes
+        
+            HasReachedEnd = true;     // mark on server that this player finished
             NetworkManager.Instance.PlayerReachedEnd(this);
         }
     }

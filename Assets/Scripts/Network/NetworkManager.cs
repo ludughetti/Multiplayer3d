@@ -156,13 +156,12 @@ namespace Network
         
         public void PlayerReachedEnd(PlayerController player)
         {
-            var finishTime = _runner.SimulationTime;
-    
-            _finishQueue.Enqueue(new FinishEntry(player, finishTime));
-            Debug.Log($"Player {player.Object.InputAuthority} finished at {finishTime:0.00}s");
+            if (!_runner.IsServer) return; // only server manages finish queue
 
-            // Optional: Print rankings so far
-            Debug.Log($"Current Rank: {_finishQueue.Count}");
+            var finishTime = _runner.SimulationTime;
+
+            _finishQueue.Enqueue(new FinishEntry(player, finishTime));
+            Debug.Log($"Player {player.Object.InputAuthority} finished at {finishTime:0.00}s, Rank: {_finishQueue.Count}");
         }
         
         // ---------------------- Empty implemented network calls ---------------------- //
