@@ -17,6 +17,7 @@ namespace Player
         private NetworkCharacterController _charControl;
         private float _currentYaw;
         
+        public bool HasReachedEnd { get; private set; }
         public float CurrentYaw => _currentYaw;
 
         public override void Spawned()
@@ -60,6 +61,14 @@ namespace Player
             // Jump
             if (input.IsInputDown(NetworkButtonType.Jump))
                 _charControl.Jump();
+        }
+
+        public void ReachEndzone()
+        {
+            if (HasReachedEnd) return;
+
+            HasReachedEnd = true;
+            NetworkManager.Instance.PlayerReachedEnd(this);
         }
     }
 }

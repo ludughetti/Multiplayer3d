@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Endzone;
 using Fusion;
 using Fusion.Sockets;
 using Player;
@@ -22,6 +23,7 @@ namespace Network
         [SerializeField] private InputActionReference jumpAction;
         
         private readonly Dictionary<PlayerRef, NetworkObject> _activePlayers = new ();
+        private readonly Queue<FinishEntry> _finishQueue = new();
         private NetworkRunner _runner;
         
         public PlayerController LocalPlayer { get; set; }
@@ -153,6 +155,21 @@ namespace Network
             
             input.Set(inputData);
         }
+        
+        // ---------------------- On endzone reached ---------------------- //
+        
+        public void PlayerReachedEnd(PlayerController player)
+        {
+            var finishTime = _runner.SimulationTime;
+    
+            _finishQueue.Enqueue(new FinishEntry(player, finishTime));
+            Debug.Log($"Player {player.Object.InputAuthority} finished at {finishTime:0.00}s");
+
+            // Optional: Print rankings so far
+            Debug.Log($"Current Rank: {_finishQueue.Count}");
+        }
+        
+        // ---------------------- Empty implemented network calls ---------------------- //
         
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
         public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }
