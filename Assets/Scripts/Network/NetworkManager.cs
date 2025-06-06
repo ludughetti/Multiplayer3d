@@ -147,7 +147,7 @@ namespace Network
             inputData.Move = moveAction.action.ReadValue<Vector2>().normalized;
             
             // Get mouse yaw rotation
-            inputData.YawDelta = lookAction.action.ReadValue<Vector2>().normalized.x;
+            inputData.YawDelta = lookAction.action.ReadValue<Vector2>().x;
             
             // Check jump
             if (jumpAction.action.ReadValue<float>() > 0f)

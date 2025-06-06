@@ -1,6 +1,7 @@
 using Fusion;
 using Network;
 using UnityEngine;
+using Utils;
 
 namespace Player
 {
@@ -14,11 +15,12 @@ namespace Player
         [SerializeField] private float moveSpeed = 7.5f;
         [SerializeField] private float rotationSpeed = 80f;
         
+        [Networked] private float NetworkYaw { get; set; }
+        
         private NetworkCharacterController _charControl;
-        private float _currentYaw;
+        private CameraFollow _cameraFollow;
         
         public bool HasReachedEnd { get; private set; }
-        public float CurrentYaw => _currentYaw;
 
         public override void Spawned()
         {
@@ -31,8 +33,12 @@ namespace Player
                 Cursor.visible = false;
                 
                 // Enable camera only for local player
-                if (playerCamera) 
+                if (playerCamera)
+                {
+                    _cameraFollow = playerCamera.GetComponent<CameraFollow>();
                     playerCamera.gameObject.SetActive(true);
+                }
+
             }
             else
             {
@@ -42,25 +48,35 @@ namespace Player
             }
             
             _charControl = GetComponent<NetworkCharacterController>();
-            _currentYaw = transform.rotation.eulerAngles.y;
+            NetworkYaw = transform.rotation.eulerAngles.y;
         }
 
         public override void FixedUpdateNetwork()
         {
-            if (!Object.HasInputAuthority || !GetInput(out NetworkInputData input)) return;
+            if (!GetInput(out NetworkInputData input)) return;
             
             // Move
             var inputDirection = new Vector3(input.Move.x, 0, input.Move.y);
-            var moveDirection = Quaternion.Euler(0, _currentYaw, 0) * inputDirection;
+            var moveDirection = Quaternion.Euler(0, NetworkYaw, 0) * inputDirection;
             _charControl.Move(moveDirection * moveSpeed * Runner.DeltaTime);
             
-            // Apply yaw orbiting
-            _currentYaw += input.YawDelta * rotationSpeed * Runner.DeltaTime;
-            transform.rotation = Quaternion.Euler(0, _currentYaw, 0);
+            // Apply yaw orbiting to networked property
+            if (Object.HasInputAuthority)
+            {
+                NetworkYaw += input.YawDelta * rotationSpeed * Runner.DeltaTime;
+            }
+            
+            // Apply rotation
+            //transform.rotation = Quaternion.Euler(0, NetworkYaw, 0);
+            _charControl.rotationSpeed = inputDirection.magnitude * Runner.DeltaTime;
             
             // Jump
             if (input.IsInputDown(NetworkButtonType.Jump))
                 _charControl.Jump();
+            
+            // Update camera
+            if (_cameraFollow)
+                _cameraFollow.FollowPlayer(transform.position, NetworkYaw, Runner.DeltaTime);
         }
 
         public void ReachEndzone()
