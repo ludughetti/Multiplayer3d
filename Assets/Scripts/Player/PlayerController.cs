@@ -1,7 +1,6 @@
 using Fusion;
 using Network;
 using UnityEngine;
-using Utils;
 
 namespace Player
 {
@@ -18,7 +17,6 @@ namespace Player
         [Networked] private float NetworkYaw { get; set; }
         
         private NetworkCharacterController _charControl;
-        private CameraFollow _cameraFollow;
         
         public bool HasReachedEnd { get; private set; }
 
@@ -34,11 +32,7 @@ namespace Player
                 
                 // Enable camera only for local player
                 if (playerCamera)
-                {
-                    _cameraFollow = playerCamera.GetComponent<CameraFollow>();
                     playerCamera.gameObject.SetActive(true);
-                }
-
             }
             else
             {
@@ -73,10 +67,6 @@ namespace Player
             // Jump
             if (input.IsInputDown(NetworkButtonType.Jump))
                 _charControl.Jump();
-            
-            // Update camera
-            if (_cameraFollow)
-                _cameraFollow.FollowPlayer(transform.position, NetworkYaw, Runner.DeltaTime);
         }
 
         public void ReachEndzone()
