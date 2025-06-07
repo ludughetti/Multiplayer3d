@@ -5,6 +5,7 @@ using Endzone;
 using Fusion;
 using Fusion.Sockets;
 using Player;
+using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Utils;
@@ -24,6 +25,7 @@ namespace Network
         private readonly Dictionary<PlayerRef, NetworkObject> _activePlayers = new ();
         private readonly Queue<FinishEntry> _finishQueue = new();
         private NetworkRunner _runner;
+        private int _totalPlayersCount = 0;
         
         public PlayerController LocalPlayer { get; set; }
         
@@ -122,6 +124,13 @@ namespace Network
             Debug.Log("Spawning new player...");
             var spawnPosition = GetRandomSpawnPosition();
             var networkPlayerObject = runner.Spawn(playerPrefab, spawnPosition, Quaternion.identity, player);
+            
+            if (networkPlayerObject.TryGetComponent(out PlayerController playerController))
+            {
+                string playerName = $"Player_{_totalPlayersCount}";
+                _totalPlayersCount++;
+                playerController.PlayerName = playerName;
+            }
 
             _activePlayers[player] = networkPlayerObject;
         }
@@ -154,14 +163,18 @@ namespace Network
         
         // ---------------------- On endzone reached ---------------------- //
         
-        public void PlayerReachedEnd(PlayerController player)
+        public void PlayerReachedEnd(PlayerController playerController)
         {
             if (!_runner.IsServer) return; // only server manages finish queue
 
             var finishTime = _runner.SimulationTime;
+            var playerName = playerController.PlayerName;
 
-            _finishQueue.Enqueue(new FinishEntry(player, finishTime));
-            Debug.Log($"Player {player.Object.InputAuthority} finished at {finishTime:0.00}s, Rank: {_finishQueue.Count}");
+            _finishQueue.Enqueue(new FinishEntry(playerName, finishTime));
+            Debug.Log($"Player {playerName} finished at {finishTime:0.00}s, Rank: {_finishQueue.Count}");
+            
+            // Disable input for player if they've reached the endzone
+            playerController.EnableInput(false);
         }
         
         // ---------------------- On timer end ---------------------- //
@@ -182,7 +195,16 @@ namespace Network
         
         public void TriggerEndGame()
         {
-            Debug.Log("Trigger end game!");
+            RPC_ShowEndgameUI();
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_ShowEndgameUI()
+        {
+            Debug.Log("RPC_ShowEndgameUI called on: " + _runner.LocalPlayer);
+            var results = _finishQueue.ToArray();
+
+            EndgameUI.Instance?.Show(results);
         }
         
         // ---------------------- Empty implemented network calls ---------------------- //

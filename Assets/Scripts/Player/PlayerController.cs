@@ -11,6 +11,7 @@ namespace Player
         [Header("Movement Settings")]
         [SerializeField] private float moveSpeed = 7.5f;
         
+        [Networked] public string PlayerName { get; set; }
         [Networked] private bool InputEnabled { get; set; }
         [Networked] public bool HasReachedEnd { get; private set; }
         

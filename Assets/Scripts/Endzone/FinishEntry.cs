@@ -4,12 +4,12 @@ namespace Endzone
 {
     public struct FinishEntry
     {
-        public PlayerController Player;
+        public string PlayerName;
         public float FinishTime;
 
-        public FinishEntry(PlayerController player, float finishTime)
+        public FinishEntry(string playerName, float finishTime)
         {
-            Player = player;
+            PlayerName = playerName;
             FinishTime = finishTime;
         }
     }
