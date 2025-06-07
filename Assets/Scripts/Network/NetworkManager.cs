@@ -164,6 +164,27 @@ namespace Network
             Debug.Log($"Player {player.Object.InputAuthority} finished at {finishTime:0.00}s, Rank: {_finishQueue.Count}");
         }
         
+        // ---------------------- On timer end ---------------------- //
+
+        public void StartGame()
+        {
+            Debug.Log("Lobby ended — enabling player input");
+
+            foreach (var playerRef in _runner.ActivePlayers)
+            {
+                if (_activePlayers.TryGetValue(playerRef, out var playerObject))
+                {
+                    var controller = playerObject.GetComponent<PlayerController>();
+                    controller?.EnableInput(true);
+                }
+            }
+        }
+        
+        public void TriggerEndGame()
+        {
+            Debug.Log("Trigger end game!");
+        }
+        
         // ---------------------- Empty implemented network calls ---------------------- //
         
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) { }

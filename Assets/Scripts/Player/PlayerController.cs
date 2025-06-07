@@ -12,6 +12,12 @@ namespace Player
         [SerializeField] private float moveSpeed = 7.5f;
         
         private NetworkCharacterController _charControl;
+        private bool _inputEnabled;
+
+        public void EnableInput(bool enable)
+        {
+            _inputEnabled = enable;
+        }
         
         [Networked]
         public bool HasReachedEnd { get; private set; }
@@ -36,7 +42,7 @@ namespace Player
 
         public override void FixedUpdateNetwork()
         {
-            if (!GetInput(out NetworkInputData input)) return;
+            if (!GetInput(out NetworkInputData input) || !_inputEnabled) return;
             
             // Move
             var inputDirection = new Vector3(input.Move.x, 0, input.Move.y);
